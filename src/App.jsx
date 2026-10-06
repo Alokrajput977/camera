@@ -6,7 +6,7 @@ import {
 import Hls from "hls.js";
 import "./App.css";
 
-const API_BASE = `http://${window.location.hostname}:8000`;
+const API_BASE = "https://backend-ilnf.onrender.com";
 
 function HLSVideo({ src }) {
   const videoRef = useRef(null);
