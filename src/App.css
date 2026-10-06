@@ -1,0 +1,804 @@
+
+.app {
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --tile: #ffffff;
+  --text: #172338;
+  --muted: #68778e;
+  --border: #dce4ef;
+  --accent: #1769e8;
+  --accent-hover: #0d57cb;
+  --video-bg: #e9eef5;
+  --shadow: 0 16px 50px #20365418;
+  min-height: 100vh;
+  width: 100%;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, Arial, sans-serif;
+}
+
+
+
+/* FULL-WIDTH CAMERA MONITORING FIX */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 300px;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.app {
+  width: 100%;
+  max-width: none !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  border-radius: 0;
+}
+
+.topbar {
+  width: 100%;
+  padding-left: clamp(12px, 2vw, 32px);
+  padding-right: clamp(12px, 2vw, 32px);
+}
+
+.monitor {
+  width: 100%;
+  max-width: none !important;
+  padding-left: clamp(12px, 1.2vw, 24px);
+  padding-right: clamp(12px, 1.2vw, 24px);
+}
+
+.camera-grid {
+  width: 100%;
+  max-width: none;
+}
+
+/* Use available screen height on desktop and TV */
+@media (min-width: 701px) {
+  .app {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .monitor {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .camera-grid {
+    flex: 1;
+    min-height: 0;
+    grid-auto-rows: minmax(0, 1fr);
+    overflow: auto;
+  }
+
+  .empty-screen {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 380px) {
+  .monitor {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .topbar {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+.app.dark {
+  --bg: #080e18;
+  --surface: #0e1827;
+  --tile: #101b2b;
+  --text: #edf3fb;
+  --muted: #95a5ba;
+  --border: #27374b;
+  --accent: #3989ff;
+  --accent-hover: #2875e5;
+  --video-bg: #070d16;
+  --shadow: 0 16px 50px #0005;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.topbar {
+  width: 100%;
+  min-height: 76px;
+  padding: 12px clamp(12px, 2vw, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--accent);
+  color: white;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(17px, 1.4vw, 22px);
+  letter-spacing: -.5px;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(7px, 1.2vw, 16px);
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.system-status svg {
+  color: #16b981;
+}
+
+.theme-btn,
+.add-btn,
+.cancel-btn {
+  min-height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.theme-btn {
+  width: 40px;
+  padding: 0;
+}
+
+.theme-btn:hover,
+.cancel-btn:hover {
+  background: var(--video-bg);
+}
+
+.add-btn {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: var(--accent-hover);
+}
+
+.add-btn:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.monitor {
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(12px, 1.5vw, 24px);
+}
+
+.monitor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.monitor-toolbar h2 {
+  margin: 0;
+  font-size: clamp(17px, 1.5vw, 23px);
+  letter-spacing: -.5px;
+}
+
+.monitor-toolbar p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.camera-grid {
+  width: 100%;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(180px, 1fr);
+  align-content: stretch;
+  gap: clamp(7px, .8vw, 14px);
+}
+
+.camera-tile {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--tile);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.tile-head {
+  min-height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px 0 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.camera-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.camera-name > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e5a53c;
+}
+
+.status-dot.connected {
+  background: #10b981;
+}
+
+.status-dot.offline {
+  background: #ef6464;
+}
+
+.tile-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1px;
+}
+
+.tile-actions button {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+}
+
+.tile-actions button:hover {
+  background: var(--video-bg);
+  color: var(--text);
+}
+
+.video-area {
+  position: relative;
+  flex: 1;
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--video-bg);
+  cursor: zoom-in;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+  background: #000;
+}
+
+.waiting {
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+.waiting-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.waiting strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.waiting span {
+  color: var(--muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.waiting small {
+  max-width: 240px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.tile-label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 5px 7px;
+  color: white;
+  background: #0009;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+.tile-foot {
+  min-height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.tile-foot > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.double-click-hint {
+  cursor: pointer;
+}
+
+.empty-screen {
+  flex: 1;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.empty-camera {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border-radius: 17px;
+}
+
+.empty-screen h2 {
+  margin: 17px 0 0;
+  font-size: 18px;
+}
+
+.empty-screen p {
+  margin: 8px 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 11px;
+}
+
+.notice button {
+  display: grid;
+  place-items: center;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+}
+
+.footer {
+  min-height: 32px;
+  margin-top: 10px;
+  padding-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 7px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+/* Add camera modal */
+
+.modal-overlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 12px;
+  background: #111a2c80;
+  backdrop-filter: blur(5px);
+}
+
+.add-modal {
+  width: min(100%, 390px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 17px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-brand {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 11%, var(--surface));
+  border-radius: 9px;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.modal-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+}
+
+.modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 18px;
+}
+
+.modal-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.modal-fields label span {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.modal-fields input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 11px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  outline: none;
+  font-size: 12px;
+}
+
+.modal-fields input:focus {
+  border-color: var(--accent);
+}
+
+.modal-fields input::placeholder {
+  color: var(--muted);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 13px 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* True browser fullscreen */
+
+.camera-tile:fullscreen {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+}
+
+.camera-tile:fullscreen .tile-head,
+.camera-tile:fullscreen .tile-foot {
+  min-height: 45px;
+  background: var(--surface);
+}
+
+.camera-tile:fullscreen .video-area {
+  min-height: 0;
+  background: #000;
+  flex: 1;
+  cursor: zoom-out;
+}
+
+.camera-tile:fullscreen .waiting {
+  color: white;
+}
+
+.camera-tile:fullscreen .waiting strong,
+.camera-tile:fullscreen .waiting span,
+.camera-tile:fullscreen .waiting small {
+  color: #d5dce7;
+}
+
+@media (min-width: 1500px) {
+  .topbar {
+    min-height: 84px;
+  }
+
+  .camera-grid {
+    gap: 14px;
+    grid-auto-rows: minmax(200px, 1fr);
+  }
+
+  .tile-head {
+    min-height: 48px;
+    padding-inline: 15px;
+  }
+
+  .camera-name {
+    font-size: 13px;
+  }
+
+  .tile-foot {
+    min-height: 37px;
+    font-size: 10px;
+  }
+
+  .waiting strong {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .camera-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(190px, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+  }
+
+  .header-actions {
+    gap: 7px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+  .brand-icon {
+    width: 37px;
+    height: 37px;
+  }
+
+  .brand p {
+    font-size: 8px;
+  }
+
+  .theme-btn,
+  .add-btn {
+    min-height: 36px;
+    padding-inline: 9px;
+    font-size: 10px;
+  }
+
+  .theme-btn {
+    width: 36px;
+  }
+
+  .monitor {
+    padding: 12px;
+  }
+
+  .camera-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(180px, 1fr);
+    gap: 8px;
+  }
+
+  .tile-head {
+    padding-inline: 7px;
+  }
+
+  .camera-name {
+    font-size: 10px;
+  }
+
+  .tile-actions button {
+    width: 25px;
+    height: 27px;
+  }
+
+  .tile-foot {
+    padding-inline: 7px;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand {
+    gap: 7px;
+  }
+
+  .brand h1 {
+    font-size: 16px;
+  }
+
+  .brand p {
+    letter-spacing: .7px;
+  }
+
+  .header-actions {
+    gap: 5px;
+  }
+
+  .add-btn {
+    gap: 4px;
+    padding-inline: 7px;
+  }
+
+  .camera-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 220px;
+  }
+
+  .toolbar-right {
+    font-size: 10px;
+  }
+
+  .footer {
+    flex-direction: column;
+  }
+}
