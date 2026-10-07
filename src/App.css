@@ -802,3 +802,155 @@ button {
     flex-direction: column;
   }
 }
+
+
+
+/* =========================================
+   CAMERA VIEW ONLY
+   ========================================= */
+
+.camera-tile {
+  position: relative;
+  overflow: hidden;
+  padding: 0 !important;
+  border: none;
+  background: #000;
+}
+
+.camera-view-only {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  background: #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.camera-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  object-fit: cover;
+  background: #000;
+  border: 0;
+  outline: none;
+}
+
+/* Hide every native video control */
+.camera-video::-webkit-media-controls {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-play-button {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-timeline {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-current-time-display {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-time-remaining-display {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-mute-button {
+  display: none !important;
+}
+
+.camera-video::-webkit-media-controls-volume-slider {
+  display: none !important;
+}
+
+/* Fullscreen button */
+.video-fullscreen-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+
+  cursor: pointer;
+  z-index: 20;
+
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.camera-view-only:hover .video-fullscreen-btn {
+  opacity: 1;
+}
+
+.video-fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Fullscreen camera */
+.camera-tile:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+}
+
+.camera-tile:fullscreen .camera-view-only {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.camera-tile:fullscreen .camera-video {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  object-fit: contain;
+}
+
+/* Keep fullscreen button available */
+.camera-tile:fullscreen .video-fullscreen-btn {
+  opacity: 0;
+}
+
+.camera-tile:fullscreen .camera-view-only:hover .video-fullscreen-btn {
+  opacity: 1;
+}
+
+/* Remove unwanted camera information */
+.camera-tile .tile-head,
+.camera-tile .tile-foot,
+.camera-tile .tile-label {
+  display: none !important;
+}
+
+/* Waiting screen */
+.camera-view-only.waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 10px;
+}

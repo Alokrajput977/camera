@@ -8,7 +8,7 @@ import "./App.css";
 
 const API_BASE = "http://10.40.40.209:8000";
 
-function HLSVideo({ src }) {
+function HLSVideo({ src, onFullscreen }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -18,29 +18,60 @@ function HLSVideo({ src }) {
     let hls;
 
     if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        backBufferLength: 0,
+      });
+
       hls.loadSource(src);
       hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = src;
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {});
+      });
     }
 
     return () => {
       hls?.destroy();
+      video.pause();
       video.removeAttribute("src");
       video.load();
     };
   }, [src]);
 
   return (
-    <video
-      ref={videoRef}
-      className="camera-video"
-      autoPlay
-      muted
-      playsInline
-      controls
-    />
+    <div
+      className="camera-view-only"
+      onDoubleClick={onFullscreen}
+    >
+      <video
+        ref={videoRef}
+        className="camera-video"
+        autoPlay
+        muted
+        playsInline
+        disablePictureInPicture
+        controlsList="nodownload noplaybackrate noremoteplayback"
+      />
+
+      <button
+        className="video-fullscreen-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          onFullscreen();
+        }}
+        title="Fullscreen"
+        aria-label="Fullscreen"
+      >
+        <Maximize2 size={20} />
+      </button>
+    </div>
   );
 }
 
@@ -249,57 +280,39 @@ useEffect(() => {
             </button>
           </section>
         ) : (
-          <section className="camera-grid">
-            {cameras.map((camera) => (
-              <article className="camera-tile" key={camera.id}>
-                <div className="tile-head">
-                  <div className="camera-name">
-                    <span className={`status-dot ${camera.status}`} />
-                    <span>{camera.ip}</span>
-                  </div>
-                  <div className="tile-actions">
-                    <button title="Remove camera" onClick={() => removeCamera(camera)} aria-label="Remove camera">
-                      <Trash2 size={16} />
-                    </button>
-                    <button title="Fullscreen" onClick={toggleFullscreen} aria-label="Fullscreen camera">
-                      <Maximize2 size={17} />
-                    </button>
-                  </div>
-                </div>
+         <section className="camera-grid">
+  {cameras.map((camera) => (
+    <article
+      className="camera-tile"
+      key={camera.id}
+      data-camera-id={camera.id}
+    >
+      {camera.streamUrl ? (
+        <HLSVideo
+          src={camera.streamUrl}
+          onFullscreen={(e) => {
+            const tile = document.querySelector(
+              `[data-camera-id="${camera.id}"]`
+            );
 
-                <div
-                  className="video-area"
-                  onDoubleClick={(e) => {
-                    const tile = e.currentTarget.closest(".camera-tile");
-                    if (document.fullscreenElement) {
-                      document.exitFullscreen().catch(() => {});
-                    } else {
-                      tile?.requestFullscreen().catch(() => {});
-                    }
-                  }}
-                  title="Double-click to toggle fullscreen"
-                >
-                  {camera.streamUrl ? (
-                    <HLSVideo src={camera.streamUrl} />
-                  ) : (
-                    <div className="waiting">
-                      <div className="waiting-icon"><Camera size={27} /></div>
-                      <strong>Waiting for camera stream</strong>
-                      <span>{camera.ip}</span>
-                    </div>
-                  )}
-                  <span className="tile-label">{camera.ip}</span>
-                </div>
-
-                <div className="tile-foot">
-                  <span><Wifi size={14} />{camera.status === "connected" ? "Connected" : "Starting stream"}</span>
-                  <span className="double-click-hint" onClick={toggleFullscreen}>
-                    <Maximize2 size={12} /> Fullscreen
-                  </span>
-                </div>
-              </article>
-            ))}
-          </section>
+            if (document.fullscreenElement) {
+              document.exitFullscreen().catch(() => {});
+            } else {
+              tile?.requestFullscreen().catch(() => {});
+            }
+          }}
+        />
+      ) : (
+        <div className="camera-view-only waiting">
+          <div className="waiting-icon">
+            <Camera size={27} />
+          </div>
+          <strong>Waiting for camera stream</strong>
+        </div>
+      )}
+    </article>
+  ))}
+</section>
         )}
 
         <footer className="footer">
